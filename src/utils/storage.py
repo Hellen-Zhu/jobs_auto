@@ -5,16 +5,19 @@ from typing import Dict, List, Any, Optional
 
 
 class Storage:
-    """数据存储管理类（带内存缓存优化）"""
+    """数据存储管理类（带内存缓存优化，支持多平台）"""
 
-    def __init__(self, data_dir: Optional[str] = None):
+    def __init__(self, data_dir: Optional[str] = None, platform: str = "boss"):
         self.data_dir = Path(data_dir) if data_dir else Path(__file__).parent.parent.parent / "data"
         self.data_dir.mkdir(exist_ok=True)
+        self.platform = platform
 
-        self.applied_jobs_file = self.data_dir / "applied_jobs.json"
-        self.blacklist_file = self.data_dir / "blacklist.json"
-        self.hr_records_file = self.data_dir / "hr_records.json"
-        self.daily_stats_file = self.data_dir / "daily_stats.json"
+        # 按平台分离数据文件
+        prefix = f"{platform}_" if platform != "boss" else ""
+        self.applied_jobs_file = self.data_dir / f"{prefix}applied_jobs.json"
+        self.blacklist_file = self.data_dir / f"{prefix}blacklist.json"
+        self.hr_records_file = self.data_dir / f"{prefix}hr_records.json"
+        self.daily_stats_file = self.data_dir / f"{prefix}daily_stats.json"
 
         # 内存缓存：只缓存 job_id 集合，用于快速查重
         self._applied_job_ids: Optional[set] = None

@@ -4,11 +4,19 @@ from .utils.config import Config
 from .utils.logger import logger
 
 
-class BrowserManager:
-    """浏览器管理类"""
+# 平台域名映射
+PLATFORM_DOMAINS = {
+    'boss': '.zhipin.com',
+    'liepin': '.liepin.com',
+}
 
-    def __init__(self, config: Config):
+
+class BrowserManager:
+    """浏览器管理类（支持多平台）"""
+
+    def __init__(self, config: Config, platform: str = "boss"):
         self.config = config
+        self.platform = platform
         self.playwright = None
         self.browser: Optional[Browser] = None
         self.context: Optional[BrowserContext] = None
@@ -24,7 +32,8 @@ class BrowserManager:
         Returns:
             Page 对象
         """
-        logger.info("启动浏览器...")
+        platform_display = "Boss直聘" if self.platform == "boss" else "猎聘网"
+        logger.info(f"[{platform_display}] 启动浏览器...")
 
         self.playwright = sync_playwright().start()
         self.browser = self.playwright.chromium.launch(
@@ -46,14 +55,17 @@ class BrowserManager:
         # 设置默认超时
         self.page.set_default_timeout(30000)
 
-        logger.info("浏览器启动成功")
+        logger.info(f"[{platform_display}] 浏览器启动成功")
         return self.page
 
     def _set_cookies(self) -> None:
         """设置 Cookie"""
-        cookie_str = self.config.cookie
+        cookie_str = self.config.get_cookie(self.platform)
+        domain = PLATFORM_DOMAINS.get(self.platform, '.zhipin.com')
+
         if not cookie_str:
-            logger.warning("未找到 Cookie，请确保 cookie.txt 文件中有有效的 Cookie")
+            cookie_file = "cookie.txt" if self.platform == "boss" else f"cookie_{self.platform}.txt"
+            logger.warning(f"未找到 Cookie，请确保 {cookie_file} 文件中有有效的 Cookie")
             return
 
         cookies = []
@@ -64,7 +76,7 @@ class BrowserManager:
                 cookies.append({
                     'name': name.strip(),
                     'value': value.strip(),
-                    'domain': '.zhipin.com',
+                    'domain': domain,
                     'path': '/'
                 })
 
