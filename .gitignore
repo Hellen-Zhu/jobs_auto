@@ -1,0 +1,24 @@
+# 敏感文件
+cookie.txt
+cookie_*.txt
+
+# 数据文件
+data/
+
+# 日志
+logs/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store

@@ -1,0 +1,45 @@
+# Boss直聘自动投递工具配置文件
+
+# 搜索条件（使用中文，程序自动转换为 URL 参数）
+search:
+  keywords:
+    - "QA"
+    - "测试开发"
+    - "自动化测试"
+    - "测试工程师"
+  city: "上海"
+  salary: "20-50K"
+  experience: "5-10年"
+  degree: "本科"
+
+# JD 过滤规则
+filter:
+  must_include: ["测试"]
+  must_exclude: ["销售", "电销", "客服", "实习"]
+  company_blacklist: []
+  company_keyword_blacklist: ["外包", "人力资源"]
+  max_job_age_days: 7
+
+# 投递设置
+apply:
+  daily_limit: 50
+  batch_limit: 20
+  interval_min: 30
+  interval_max: 60
+
+# 打招呼模板（随机选择，支持变量：{position} {company}）
+greetings:
+  - "您好，我对贵司的{position}很感兴趣，有13年测试经验，擅长自动化测试框架搭建和团队管理，期待与您进一步沟通。"
+  - "您好，看到贵司在招{position}，我的经验和要求比较匹配，方便聊聊吗？"
+  - "您好，{position}这个岗位很适合我，我有丰富的测试经验，希望能有机会详聊。"
+
+# 定时任务
+schedule:
+  enabled: true
+  times:
+    - "09:00"
+    - "14:00"
+    - "15:00"
+    - "17:00"
+  workdays_only: false
+  weekend_limit: 10
